@@ -55,4 +55,22 @@ public class CustomerRestControllerTest {
         assertEquals("Sherlock", ReflectionTestUtils.getField(customers.get(0), "firstName"));
         assertEquals("Finch", ReflectionTestUtils.getField(customers.get(1), "lastName"));
     }
+
+    @Test
+    public void getCustomersByName() throws Exception {
+
+        String response = mockMvc.perform(
+                get("/v1/customers")
+                        .param("name", "holmes")
+                        .contentType(APPLICATION_JSON_UTF8)
+                        .accept(APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        List<Customer> customers = objectMapper.readValue(response, new TypeReference<List<Customer>>(){});
+        assertEquals(1, customers.size());
+        assertEquals("Sherlock", ReflectionTestUtils.getField(customers.get(0), "firstName"));
+    }
 }

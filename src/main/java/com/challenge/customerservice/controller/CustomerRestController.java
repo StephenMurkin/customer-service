@@ -4,11 +4,9 @@ import com.challenge.customerservice.model.Customer;
 import com.challenge.customerservice.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,9 +28,14 @@ public class CustomerRestController {
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<Customer>> getCustomers() {
+    public ResponseEntity<List<Customer>> getCustomers(@RequestParam(required = false) String name, Pageable pageable) {
 
-        log.info("Received request to retrieve all customers");
-        return ResponseEntity.ok(customerService.getCustomers());
+        if (name != null) {
+            log.info("Received request to retrieve all customers with a last name of {}", name);
+            return ResponseEntity.ok(customerService.getCustomers(name, pageable));
+        } else {
+            log.info("Received request to retrieve all customers");
+            return ResponseEntity.ok(customerService.getCustomers(pageable));
+        }
     }
 }
